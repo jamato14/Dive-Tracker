@@ -1,5 +1,29 @@
+import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        Object obj = new JSONParser().parse(new FileReader("..\\db.json"));
+        JSONObject js = (JSONObject) obj;
+        String url = (String) js.get("url");
+        int port = (int) js.get("port");        
+        String dbname = (String) js.get("dbname");        
+        String user = (String) js.get("user");        
+        String password = (String) js.get("password");        
+        PostgresConnection c= new PostgresConnection(url, port, dbname, user, password);
+        c.createConnection();
+        Connection con = c.getConnection();
+        Statement state = con.createStatement();
+        ResultSet rs = state.executeQuery("Select * from users;");
+        while(rs.next())
+        {
+            System.out.print("ID: "+ rs.getInt("id"));
+        }
+        c.closeConnection();
     }
 }
