@@ -18,7 +18,13 @@ public class App {
         PostgresConnection c = new PostgresConnection(url, port, dbname, user, password);
 
         //Connection con = c.createConnection();
-        Optional<String> loc = Optional.ofNullable("locate");
-        c.insertDive(loc, null, Optional.ofNullable(86.1), null, null, null, null, null, null);
+        //Optional<String> loc = Optional.ofNullable("locate");
+        //c.insertDive(loc, null, Optional.ofNullable(86.1), null, null, null, null, null, null);
+        ResultSet dives = c.queryDive(1);
+        while (dives.next())
+        {
+            System.out.println(dives.getDouble("air_temp"));
+        }
+        c.deleteDive(1);
     }
 }

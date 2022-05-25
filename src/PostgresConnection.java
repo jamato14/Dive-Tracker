@@ -139,6 +139,26 @@ public class PostgresConnection {
         return false;
     }
 
+    public ResultSet queryDive(int number)
+    {
+        ResultSet results = null;
+        try
+        {
+            Connection conn = createConnection();
+            String query = "select * from dive"; //where id = ?";
+            PreparedStatement state = conn.prepareStatement(query);
+            //state.setInt(1, number);
+            results = state.executeQuery();
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error processing SQL QUERY dive");
+            e.printStackTrace();
+        }
+        return results;
+    }
+    
     public boolean insertDive(Optional<String> location, Optional<String> exposure, Optional<Double> air, Optional<Double> water, 
                             Optional<Double> weight, Optional<String> guide, Optional<Integer> sgas, Optional<Integer> egas, Optional<String> gas_type)
         {
@@ -255,6 +275,30 @@ public class PostgresConnection {
 
             return false;
         }
+
+    
+        public boolean deleteDive(int number)
+        {
+            int result = 0;
+            try
+            {
+                String query = "delete from dive where number=?";
+                Connection conn = createConnection();
+                PreparedStatement state = conn.prepareStatement(query);
+                state.setInt(1, number);
+                result = state.executeUpdate();
+                conn.close();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("Error processing SQL delete dive: "+ number);
+                e.printStackTrace();
+            }
+            if (result > 0)
+                return true;
+            return false;
+        }
+    
 
     public static void main(String args[])
     {
