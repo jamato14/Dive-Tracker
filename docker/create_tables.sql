@@ -16,9 +16,9 @@ CREATE TABLE dive (
 );
 
 CREATE TABLE dive_group (
-	dive_numbers 		INT [],
-	name				TEXT,
-	PRIMARY KEY (dive_numbers, name)
+	group_number 		SERIAL PRIMARY KEY,
+	dive_numbers 		INTEGER[] NOT NULL,
+	name				TEXT
 );
 
 CREATE TABLE users (

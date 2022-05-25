@@ -1,6 +1,6 @@
 import java.io.FileReader;
-import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;
@@ -26,5 +26,11 @@ public class App {
             System.out.println(dives.getDouble("air_temp"));
         }
         c.deleteDive(1);
+        ArrayList<Integer> n = new ArrayList<Integer>();
+        n.add(1);
+        n.add(2);
+        Optional<ArrayList<Integer>> nums = Optional.of(n);
+        c.insertDiveGroup(nums, Optional.of("Sample"));
+        c.deleteDiveGroup(1);
     }
 }

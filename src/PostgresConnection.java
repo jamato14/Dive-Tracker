@@ -1,3 +1,4 @@
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -277,29 +278,116 @@ public class PostgresConnection {
         }
 
     
-        public boolean deleteDive(int number)
+    public boolean deleteDive(int number)
+    {
+        int result = 0;
+        try
         {
-            int result = 0;
-            try
+            String query = "delete from dive where number=?";
+            Connection conn = createConnection();
+            PreparedStatement state = conn.prepareStatement(query);
+            state.setInt(1, number);
+            result = state.executeUpdate();
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error processing SQL delete dive: "+  number);
+            e.printStackTrace();
+        }
+        if (result > 0)
+            return true;
+        return false;
+    }
+
+
+    public ResultSet queryDiveGroup(int number)
+    {
+        ResultSet results = null;
+        try
+        {
+            Connection conn = createConnection();
+            String query = "select * from dive_group //where id = ?";
+            
+            PreparedStatement state = conn.prepareStatement(query);
+            state.setInt(1, number);
+            results = state.executeQuery();
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error processing SQL QUERY dive");
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    public boolean insertDiveGroup(Optional<ArrayList<Integer>> numbers, Optional<String> name)
+    {
+        try
+        {
+            Connection conn = createConnection();
+            ArrayList<String> insert = new ArrayList<String>();
+            ArrayList<String> val = new ArrayList<String>();
+            if (numbers != null)
             {
-                String query = "delete from dive where number=?";
-                Connection conn = createConnection();
-                PreparedStatement state = conn.prepareStatement(query);
-                state.setInt(1, number);
-                result = state.executeUpdate();
-                conn.close();
+                insert.add("dive_numbers");
+                val.add("?");
             }
-            catch (SQLException e)
+            if (name != null)
             {
-                System.out.println("Error processing SQL delete dive: "+ number);
-                e.printStackTrace();
+                insert.add("name");
+                val.add("?");
             }
+            String query = "insert into dive_group (" + String.join(", ", insert) + ") values "+ "( "+String.join(", ", val) + ")";
+            PreparedStatement state = conn.prepareStatement(query);
+            int i = 1;
+            if (numbers != null)
+            {
+                Array arr = conn.createArrayOf("INT", numbers.get().toArray());
+                state.setArray(i, arr);
+                i++;
+            }
+            if (name != null)
+            {
+                state.setString(i, name.get());;
+                i++;
+            }
+            int result = state.executeUpdate();
             if (result > 0)
                 return true;
-            return false;
-        }
-    
 
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error inserting row to DiveGroup");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteDiveGroup(int number)
+    {
+        int result = 0;
+        try
+        {
+            String query = "delete from dive_group where group_number=?";
+            Connection conn = createConnection();
+            PreparedStatement state = conn.prepareStatement(query);
+            state.setInt(1, number);
+            result = state.executeUpdate();
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error processing SQL delete dive: "+  number);
+            e.printStackTrace();
+        }
+        if (result > 0)
+            return true;
+        return false;
+    }
     public static void main(String args[])
     {
         PostgresConnection c = new PostgresConnection("localhost", 5432, "postgres", "postgres", "postgres");
