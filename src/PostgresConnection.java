@@ -2,7 +2,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Optional;
 
 
 public class PostgresConnection {
@@ -72,7 +75,7 @@ public class PostgresConnection {
 
         }
 
-    public ResultSet query(String query)
+    public ResultSet queryUser(String query)
     {
         ResultSet results = null;
         try
@@ -90,24 +93,168 @@ public class PostgresConnection {
         return results;
     }
 
-    public boolean insert(String query)
+    public boolean insertUser(String name, String email, String password)
     {
         int result = 0;
         try
         {
+            String query = "insert into users (name, email, password) values (?,?,?)";
             Connection conn = createConnection();
-            Statement state = conn.createStatement();
-            result = state.executeUpdate(query);
+            PreparedStatement state = conn.prepareStatement(query);
+            state.setString(1, name);
+            state.setString(2, email);
+            state.setString(3, password);
+            result = state.executeUpdate();
+            conn.close();
         }
         catch (SQLException e)
         {
-            System.out.println("Error processing SQL INSERT: "+query);
+            System.out.println("Error processing SQL insert User");
             e.printStackTrace();
         }
         if (result > 0)
             return true;
         return false;
     }
+
+    public boolean deleteUser(int id)
+    {
+        int result = 0;
+        try
+        {
+            String query = "delete from users where id=?";
+            Connection conn = createConnection();
+            PreparedStatement state = conn.prepareStatement(query);
+            state.setInt(1, id);
+            result = state.executeUpdate();
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error processing SQL insert User");
+            e.printStackTrace();
+        }
+        if (result > 0)
+            return true;
+        return false;
+    }
+
+    public boolean insertDive(Optional<String> location, Optional<String> exposure, Optional<Double> air, Optional<Double> water, 
+                            Optional<Double> weight, Optional<String> guide, Optional<Integer> sgas, Optional<Integer> egas, Optional<String> gas_type)
+        {
+            ArrayList<String> insert = new ArrayList<String>();
+            ArrayList<String> val = new ArrayList<String>();
+            if (location != null)
+            {
+                insert.add("location");
+                val.add("?");
+            }
+            if (exposure != null)
+            {
+                insert.add("exposure");
+                val.add("?");
+            }
+            if (air != null)
+            {
+                insert.add("air_temp");
+                val.add("?");
+            }
+            if (water != null)
+            {
+                insert.add("water_temp");
+                val.add("?");
+            }
+            if (weight != null)
+            {
+                insert.add("weight");
+                val.add("?");
+            }
+            if (guide != null)
+            {
+                insert.add("guide");
+                val.add("?");
+            }
+            if (sgas != null)
+            {
+                insert.add("start_gas_pressure");
+                val.add("?");
+            }
+            if (egas != null)
+            {
+                insert.add("end_gas_pressure");
+                val.add("?");
+            }
+            if (gas_type != null)
+            {
+                insert.add("gas_type");
+                val.add("?");
+            }
+            String query = "insert into dive (" + String.join(", ", insert) + ") values (" + String.join(", ", val) +")";
+            try
+            {
+                Connection conn = createConnection();
+                PreparedStatement state = conn.prepareStatement(query);
+                int i = 1;
+                if (location != null)
+                {
+                    state.setString(i, location.get());
+                    i++;
+                }
+                if (exposure != null)
+                {
+                    state.setString(i, exposure.get());
+                    i++;
+                }
+                if (air != null)
+                {
+                    state.setDouble(i, air.get());
+                    i++;
+                }
+                if (water != null)
+                {
+                    state.setDouble(i, water.get());
+                    i++;
+                }
+                if (weight != null)
+                {
+                    state.setDouble(i, weight.get());
+                    i++;
+                }
+                if (guide != null)
+                {
+                    state.setString(i, guide.get());
+                    i++;
+                }
+                if (sgas != null)
+                {
+                    state.setInt(i, sgas.get());
+                    i++;
+                }
+                if (egas != null)
+                {
+                    state.setInt(i, egas.get());
+                    i++;
+                }
+                if (gas_type != null)
+                {
+                    state.setString(i, gas_type.get());
+                    i++;
+                }
+
+                int result = state.executeUpdate();
+                if (result > 0)
+                    return true;
+            }
+            catch (SQLException e)
+            {
+                System.out.println("Error processing SQL insert dive");
+                e.printStackTrace();
+            }
+            
+            System.out.println(query);
+
+            return false;
+        }
 
     public static void main(String args[])
     {

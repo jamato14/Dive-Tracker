@@ -1,7 +1,7 @@
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.Optional;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
@@ -15,13 +15,10 @@ public class App {
         String dbname = (String) js.get("dbname");        
         String user = (String) js.get("user");        
         String password = (String) js.get("password");        
-        PostgresConnection c= new PostgresConnection(url, port, dbname, user, password);
-        Connection con = c.createConnection();
-        Statement state = con.createStatement();
-        ResultSet rs = state.executeQuery("Select * from users;");
-        while(rs.next())
-        {
-            System.out.print("ID: "+ rs.getInt("id"));
-        }
+        PostgresConnection c = new PostgresConnection(url, port, dbname, user, password);
+
+        //Connection con = c.createConnection();
+        Optional<String> loc = Optional.ofNullable("locate");
+        c.insertDive(loc, null, Optional.ofNullable(86.1), null, null, null, null, null, null);
     }
 }
