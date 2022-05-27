@@ -1,6 +1,7 @@
 import './App.css';
 import { Button, Grid, makeStyles } from '@mui/material'
 import Header from './components/Header';
+import DiveAccordion from './components/DiveAccordion';
 
 const App = () => {
   return (
@@ -10,7 +11,7 @@ const App = () => {
           <Header />
         </Grid>
         <Grid item>
-          Other rows
+          <DiveAccordion />
         </Grid>
       </Grid>
     

@@ -6,7 +6,7 @@ import React from 'react';
 const Header = () => {
     return ( 
     <Box sx = {{ flexGrow:1 }}>
-        <AppBar postion="static">
+        <AppBar position="static">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label='menu' sx = {{ mr:2 }}>
                     <MenuIcon />
@@ -15,7 +15,7 @@ const Header = () => {
                 <Button color="inherit">ClickMe</Button>
             </Toolbar>
         </AppBar>
-    </Box> 
+     </Box> 
     );
 };
 
